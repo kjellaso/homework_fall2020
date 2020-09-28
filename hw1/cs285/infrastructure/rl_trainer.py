@@ -1,7 +1,6 @@
 from collections import OrderedDict
 import numpy as np
 import time
-
 import gym
 import torch
 
@@ -166,6 +165,7 @@ class RL_Trainer(object):
         # HINT1: use sample_trajectories from utils
         # HINT2: you want each of these collected rollouts to be of length self.params['ep_len']
         print("\nCollecting data to be used for training...")
+        sample_trajectories
         paths, envsteps_this_batch = TODO
 
         # collect more rollouts with the same policy, to be saved as videos in tensorboard

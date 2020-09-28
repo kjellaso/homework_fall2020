@@ -110,7 +110,6 @@ class MLPPolicyPG(MLPPolicy):
     def __init__(self, ac_dim, ob_dim, n_layers, size, **kwargs):
 
         super().__init__(ac_dim, ob_dim, n_layers, size, **kwargs)
-        self.baseline_loss = nn.MSELoss()
 
     def update(self, observations, actions, advantages, q_values=None):
         observations = ptu.from_numpy(observations)
