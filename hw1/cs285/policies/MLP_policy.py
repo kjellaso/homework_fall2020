@@ -62,6 +62,7 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
                 torch.zeros(self.ac_dim, dtype=torch.float32, device=ptu.device)
             )
             self.logstd.to(ptu.device)
+            
             self.optimizer = optim.Adam(
                 itertools.chain([self.logstd], self.mean_net.parameters()),
                 self.learning_rate
@@ -80,8 +81,8 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
         else:
             observation = obs[None]
 
-        # TODO return the action that the policy prescribes
-        raise NotImplementedError
+        # TODO return the action that the policy prescribes -> DONE
+        return self.forward(obs)
 
     # update/train this policy
     def update(self, observations, actions, **kwargs):
@@ -93,7 +94,10 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
     # return more flexible objects, such as a
     # `torch.distributions.Distribution` object. It's up to you!
     def forward(self, observation: torch.FloatTensor) -> Any:
-        raise NotImplementedError
+        if self.logits_na != None:
+            return self.logits_na(observation)
+        elif self.mean_net != None:
+            return self.mean_net(observation) 
 
 
 #####################################################
@@ -108,8 +112,14 @@ class MLPPolicySL(MLPPolicy):
             self, observations, actions,
             adv_n=None, acs_labels_na=None, qvals=None
     ):
-        # TODO: update the policy and return the loss
-        loss = TODO
+        pred = self.forward(observations=observations)
+        loss = self.loss(pred, observations)
+
+        # TODO: update the policy and return the loss -> DONE
+        self.loss.backward()
+        self.optimizer.step()
+        self.optimizer.zero_grad()
+
         return {
             # You can add extra logging information here, but keep this line
             'Training Loss': ptu.to_numpy(loss),
