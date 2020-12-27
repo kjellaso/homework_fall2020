@@ -82,7 +82,7 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
             observation = obs[None]
 
         # TODO return the action that the policy prescribes -> DONE
-        return self.forward(obs)
+        return self.forward(torch.FloatTensor(obs)).detach().numpy()
 
     # update/train this policy
     def update(self, observations, actions, **kwargs):
@@ -112,15 +112,16 @@ class MLPPolicySL(MLPPolicy):
             self, observations, actions,
             adv_n=None, acs_labels_na=None, qvals=None
     ):
-        pred = self.forward(observations=observations)
-        loss = self.loss(pred, observations)
+
+        pred = self.forward(observation=torch.FloatTensor(observations))
+        output = self.loss(pred, torch.FloatTensor(actions))
 
         # TODO: update the policy and return the loss -> DONE
-        self.loss.backward()
+        output.backward()
         self.optimizer.step()
         self.optimizer.zero_grad()
 
         return {
             # You can add extra logging information here, but keep this line
-            'Training Loss': ptu.to_numpy(loss),
+            'Training Loss': ptu.to_numpy(output),
         }

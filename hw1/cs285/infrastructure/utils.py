@@ -53,7 +53,7 @@ def sample_trajectory(env: gym.Env, policy: MLPPolicy, max_path_length, render=F
         obs.append(ob)
         # TODO # HINT: query the policy's get_action function -> DONE
         ac = policy.get_action(ob)
-        ac = ac[0]
+        # ac = ac[0]
         acs.append(ac)
 
         # take that action and record results

@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from typing import Union
 
 import torch
@@ -40,21 +41,24 @@ def build_mlp(
         returns:
             MLP (nn.Module)
     """
+
     if isinstance(activation, str):
         activation = _str_to_activation[activation]
     if isinstance(output_activation, str):
         output_activation = _str_to_activation[output_activation]
 
     # TODO: return a MLP. This should be an instance of nn.Module
-    # Note: nn.Sequential is an instance of nn.Module.
-    layers = [nn.Linear(input_size, output_size), activation]
-    for i in range(n_layers) - 1:
-        layers += [nn.Linear(size, size), activation]
+    # Note: nn.Sequential is an instance of nn.Module. -> DONE
+    layers = [("Linear", nn.Linear(input_size, size)), ("Relu", activation)]
+    layer_counter = 1
+    for i in range(n_layers - 1):
+        layers += [(f"Linear{layer_counter+1}", nn.Linear(size, size)), (f"Relu{layer_counter+1}", activation)]
+        layer_counter += 1
 
-    layers += [nn.Linear(size, output_size)]
-    layers += [activation]
+    layers += [(f"Linear{layer_counter+1}", nn.Linear(size, output_size))]
+    layers += [(f"Relu{layer_counter+1}", activation)]
     
-    return nn.Sequential(layers)
+    return nn.Sequential(OrderedDict(layers))
 
 
 device = None

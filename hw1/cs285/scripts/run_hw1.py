@@ -4,6 +4,7 @@ import time
 from cs285.infrastructure.rl_trainer import RL_Trainer
 from cs285.agents.bc_agent import BCAgent
 from cs285.policies.loaded_gaussian_policy import LoadedGaussianPolicy
+# import pybullet_envs
 
 class BC_Trainer(object):
 
@@ -80,10 +81,48 @@ def main():
     parser.add_argument('--max_replay_buffer_size', type=int, default=1000000)
     parser.add_argument('--save_params', action='store_true')
     parser.add_argument('--seed', type=int, default=1)
-    args = parser.parse_args()
 
+    # args = parser.parse_args()
+    
+    # params = vars(args)
     # convert args to dictionary
-    params = vars(args)
+
+    class Args:
+        #@markdown expert data
+        expert_policy_file = 'hw1/cs285/policies/experts/Ant.pkl' #@param
+        expert_data = 'hw1/cs285/expert_data/expert_data_Ant-v2.pkl' #@param
+        env_name = 'Ant-v2' #@param ['Ant-v2', 'Humanoid-v2', 'Walker2d-v2', 'HalfCheetah-v2', 'Hopper-v2']
+        # env_name = 'RoboschoolAnt-v1'
+        exp_name = 'test_bc_ant' #@param
+        do_dagger = False #@param {type: "boolean"}
+        ep_len = 1000 #@param {type: "integer"}
+        save_params = False #@param {type: "boolean"}
+
+        num_agent_train_steps_per_iter = 1000 #@param {type: "integer"})
+        n_iter = 1 #@param {type: "integer"})
+
+        #@markdown batches & buffers
+        batch_size = 1000 #@param {type: "integer"})
+        eval_batch_size = 1000 #@param {type: "integer"}
+        train_batch_size = 100 #@param {type: "integer"}
+        max_replay_buffer_size = 1000000 #@param {type: "integer"}
+
+        #@markdown network
+        n_layers = 2 #@param {type: "integer"}
+        size = 64 #@param {type: "integer"}
+        learning_rate = 5e-3 #@param {type: "number"}
+
+        #@markdown logging
+        video_log_freq = 5 #@param {type: "integer"}
+        scalar_log_freq = 1 #@param {type: "integer"}
+
+        #@markdown gpu & run-time settings
+        no_gpu = False #@param {type: "boolean"}
+        which_gpu = 0 #@param {type: "integer"}
+        seed = 1 #@param {type: "integer"}
+
+    args = Args()
+    params = dict(Args.__dict__)
 
     ##################################
     ### CREATE DIRECTORY FOR LOGGING
