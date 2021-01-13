@@ -1,6 +1,6 @@
 {
      "python.analysis.extraPaths": [
-        "./hw1"
+        "hw1"
     ],
     "python.testing.promptToConfigure": false,
     "python.testing.pytestEnabled": false,

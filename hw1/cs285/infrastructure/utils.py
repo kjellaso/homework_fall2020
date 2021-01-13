@@ -10,6 +10,7 @@ from cs285.policies.base_policy import BasePolicy
 
 
 def Path(obs, image_obs, acs, rewards, next_obs, terminals):
+    
     """
         Take info (separate arrays) from a single rollout
         and return it in a single dictionary

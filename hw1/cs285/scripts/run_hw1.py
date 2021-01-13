@@ -66,7 +66,7 @@ def main():
 
     parser.add_argument('--batch_size', type=int, default=1000)  # training data collected (in the env) during each iteration
     parser.add_argument('--eval_batch_size', type=int,
-                        default=1000)  # eval data collected (in the env) for logging metrics
+                        default=5000)  # eval data collected (in the env) for logging metrics
     parser.add_argument('--train_batch_size', type=int,
                         default=100)  # number of sampled data points to be used per gradient/train step
 
@@ -82,9 +82,9 @@ def main():
     parser.add_argument('--save_params', action='store_true')
     parser.add_argument('--seed', type=int, default=1)
 
-    # args = parser.parse_args()
+    args = parser.parse_args()
     
-    # params = vars(args)
+    params = vars(args)
     # convert args to dictionary
 
     class Args:
@@ -121,8 +121,8 @@ def main():
         which_gpu = 0 #@param {type: "integer"}
         seed = 1 #@param {type: "integer"}
 
-    args = Args()
-    params = dict(Args.__dict__)
+    # args = Args()
+    # params = dict(Args.__dict__)
 
     ##################################
     ### CREATE DIRECTORY FOR LOGGING
