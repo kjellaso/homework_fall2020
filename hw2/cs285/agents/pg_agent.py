@@ -1,3 +1,4 @@
+from typing import List
 import numpy as np
 
 from .base_agent import BaseAgent
@@ -46,16 +47,25 @@ class PGAgent(BaseAgent):
 
         # TODO: step 3: use all datapoints (s_t, a_t, q_t, adv_t) to update the PG actor/policy
         ## HINT: `train_log` should be returned by your actor update method
-        train_log = TODO
+        train_log = self.actor.update(observations, actions, advantages, q_values)
 
         return train_log
 
-    def calculate_q_vals(self, rewards_list):
+    def calculate_q_vals(self, rewards_list: List[List[float]]) -> np.array:
+        """Monte Carlo estimation of the Q function. Takes in a list of rewards
+        trajectories. E.g one element of rewards_list a list containing the rewards
+        from one rollout from t=0 to t=T.
 
-        """
-            Monte Carlo estimation of the Q function.
-        """
+        Parameters
+        ----------
+        rewards_list : List[List[float]]
+            [description]
 
+        Returns
+        -------
+        np.array
+            Q-function estimate
+        """
         # Case 1: trajectory-based PG
         # Estimate Q^{pi}(s_t, a_t) by the total discounted reward summed over entire trajectory
         if not self.reward_to_go:
@@ -131,8 +141,7 @@ class PGAgent(BaseAgent):
         # TODO: create list_of_discounted_returns
         # Hint: note that all entries of this output are equivalent
             # because each sum is from 0 to T (and doesnt involve t)
-
-        return list_of_discounted_returns
+        return [np.sum([reward*self.gamma^t for t,reward in enumerate(rewards)])]*len(rewards)
 
     def _discounted_cumsum(self, rewards):
         """
@@ -141,11 +150,12 @@ class PGAgent(BaseAgent):
             -and returns a list where the entry in each index t' is sum_{t'=t}^T gamma^(t'-t) * r_{t'}
         """
 
-        # TODO: create `list_of_discounted_returns`
+        # TODO: create `list_of_discounted_returns` -> DONE
         # HINT1: note that each entry of the output should now be unique,
             # because the summation happens over [t, T] instead of [0, T]
         # HINT2: it is possible to write a vectorized solution, but a solution
             # using a for loop is also fine
-
-        return list_of_discounted_cumsums
+        r_n = len(rewards)
+        gamma_arr = self.gamma**np.arange(r_n)
+        return [rewards[i:].T.dot(gamma_arr[0:r_n-i]) for i in range(r_n)]
 
